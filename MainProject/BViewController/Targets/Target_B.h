@@ -1,5 +1,5 @@
 //
-//  AViewController.h
+//  Target_B.h
 //  MainProject
 //
 //  Created by casa on 2016/12/10.
@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AViewController : UIViewController
+@interface Target_B : NSObject
+
+- (UIViewController *)Action_viewController:(NSDictionary *)params;
 
 @end
