@@ -7,23 +7,49 @@
 //
 
 #import "ViewController.h"
+#import <HandyFrame/UIView+LayoutMethods.h>
+#import "AViewController.h"
 
 @interface ViewController ()
+
+@property (nonatomic, strong) UIButton *pushAViewControllerButton;
 
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad {
+#pragma mark - life cycle
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    [self.view addSubview:self.pushAViewControllerButton];
 }
 
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [self.pushAViewControllerButton sizeToFit];
+    [self.pushAViewControllerButton centerEqualToView:self.view];
 }
 
+#pragma mark - event response
+- (void)didTappedPushAViewControllerButton:(UIButton *)button
+{
+    AViewController *viewController = [[AViewController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
+}
+
+#pragma mark - getters and setters
+- (UIButton *)pushAViewControllerButton
+{
+    if (_pushAViewControllerButton == nil) {
+        _pushAViewControllerButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_pushAViewControllerButton setTitle:@"push A view controller" forState:UIControlStateNormal];
+        [_pushAViewControllerButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+        [_pushAViewControllerButton addTarget:self action:@selector(didTappedPushAViewControllerButton:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _pushAViewControllerButton;
+}
 
 @end

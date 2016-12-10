@@ -10,4 +10,6 @@
 
 @interface BViewController : UIViewController
 
+- (instancetype)initWithContentText:(NSString *)contentText;
+
 @end
