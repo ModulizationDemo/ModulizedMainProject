@@ -6,11 +6,14 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 target 'MainProject' do
   # Uncomment this line if you're using Swift or would like to use dynamic frameworks
-  # use_frameworks!
+  use_frameworks!
+  use_modular_headers!
+  #
   pod 'A_Category'
- 
-  # Private Pods
+  pod 'A_Extension'
   pod 'HandyFrame'
   pod 'A'
+  pod 'A_swift'
+  pod 'CTMediator'
 
 end

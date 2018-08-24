@@ -8,11 +8,14 @@
 
 #import "ViewController.h"
 #import <HandyFrame/UIView+LayoutMethods.h>
+#import <CTMediator/CTMediator.h>
 #import <A_Category/CTMediator+A.h>
+#import <A_Extension/A_Extension-Swift.h>
 
-@interface ViewController ()
+@interface ViewController () <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) UIButton *pushAViewControllerButton;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) NSArray *dataSource;
 
 @end
 
@@ -22,34 +25,87 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.view addSubview:self.pushAViewControllerButton];
+    [self.view addSubview:self.tableView];
 }
 
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-
-    [self.pushAViewControllerButton sizeToFit];
-    [self.pushAViewControllerButton centerEqualToView:self.view];
+    [self.tableView fill];
 }
 
-#pragma mark - event response
-- (void)didTappedPushAViewControllerButton:(UIButton *)button
+#pragma mark - UITableViewDataSource
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    UIViewController *viewController = [[CTMediator sharedInstance] A_aViewController];
-    [self.navigationController pushViewController:viewController animated:YES];
+    return self.dataSource.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+}
+
+#pragma mark - UITableViewDelegate
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    cell.textLabel.text = self.dataSource[indexPath.row];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == 0) {
+        // Objective-C -> Category -> Objective-C
+        UIViewController *viewController = [[CTMediator sharedInstance] A_Category_Objc_ViewControllerWithCallback:^(NSString *result) {
+            NSLog(@"%@", result);
+        }];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
+    if (indexPath.row == 1) {
+        // Objective-C -> Category -> Swift
+        UIViewController *viewController = [[CTMediator sharedInstance] A_Category_Swift_ViewControllerWithCallback:^(NSString *result) {
+            NSLog(@"%@", result);
+        }];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
+    if (indexPath.row == 2) {
+        // Objective-C -> Extension -> Objective-C
+        UIViewController *viewController = [[CTMediator sharedInstance] A_showObjcWithCallback:^(NSString * _Nonnull result) {
+            NSLog(@"%@", result);
+        }];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
+    if (indexPath.row == 3) {
+        // Objective-C -> Extension -> Swift
+        UIViewController *viewController = [[CTMediator sharedInstance] A_showSwiftWithCallback:^(NSString * _Nonnull result) {
+            NSLog(@"%@", result);
+        }];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
 }
 
 #pragma mark - getters and setters
-- (UIButton *)pushAViewControllerButton
+- (UITableView *)tableView
 {
-    if (_pushAViewControllerButton == nil) {
-        _pushAViewControllerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_pushAViewControllerButton setTitle:@"push A view controller" forState:UIControlStateNormal];
-        [_pushAViewControllerButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-        [_pushAViewControllerButton addTarget:self action:@selector(didTappedPushAViewControllerButton:) forControlEvents:UIControlEventTouchUpInside];
+    if (_tableView == nil) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     }
-    return _pushAViewControllerButton;
+    return _tableView;
+}
+
+- (NSArray *)dataSource
+{
+    if (_dataSource == nil) {
+        _dataSource = @[
+                        @"Objective-C -> Category -> Objective-C",
+                        @"Objective-C -> Category -> Swift",
+                        @"Objective-C -> Extension -> Objective-C",
+                        @"Objective-C -> Extension -> Swift",
+                        ];
+    }
+    return _dataSource;
 }
 
 @end
